@@ -113,7 +113,7 @@ $subject = "Backup ERROR $servername $date"
 } 
 
 # Comprobamos que tengamos espacio en DESTINO  
-If ( $FREEDESTINO -le $TAMORIGEN)
+If ( $FREEDESTINO -ge $TAMORIGEN)
 {
 echo "El Tamaño de la Copia ($TAMORIGEN GB) Excede el Libre en Destino ($FREEDESTINO GB). No puedo Hacer la copia"
 $subject = "Backup ERROR $servername $date"

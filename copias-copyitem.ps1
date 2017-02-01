@@ -2,6 +2,8 @@
 #|              SCRIPT DE COPIAS MAIN INFORMATICA GANDIA SL          | 
 #|              V1.4 jtormo@main-informatica.com                     |
 #|                                                                   |
+#|   METODO DE COPIAS: COPY-ITEM Power Shell                         |
+#|                                                                   |
 #|   ATENCION: El sistema debe permitir ejecucion de scripts         |
 #|             Ejecuta como administrador POWER SHELL ISE            |
 #|             Ejecuta el comando: Set-ExecutionPolicy Unrestricted  |

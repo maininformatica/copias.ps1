@@ -22,18 +22,19 @@
  
  
 # Variables de Entorno
-$servername="PEPE-win10"														# Nombre del Servidor
-$nummax = "2" 																	# Numero de copias NO rotativas, es decir, una vez existan 3 a la 4 borrarÃ¡ la mas antigua
-$unidaddestino="C:"																# Unidad Donde estan las Imagenes a copiar
-$unidadorigen="C:"																# Unidad destino donde guardar la copia
-$dirdestino="$unidaddestino\SHELL\DESTINO"									    # Directorio Completo donde alberga las copias
-$source = "$unidadorigen\SHELL\ORIGEN\*"                                     	# Directorio Completo donde estan los discos a copiar
-$date = Get-Date -Format yyyyMMdd 												# Fecha
-$smtp = "188.93.78.29" 															# Servidor SMTP para envio de correos
-$from = "backups@main-informatica.com <backups@main-informatica.com>"			# Desde que cuenta 
-$to = "jtormo@main-informatica.com <jtormo@main-informatica.com>" 				# A que cuenta
-$pref="SEMANAL"	 																# Prefijo de Copia (se puede usar para indicar la frecuencia de la copia)
-$warnspace="120"                                                                 # Nivel de Alarma en espacio Libre de Destino Medido en GB
+$servername="HYPERV1"								# Nombre HOST HyperV
+$maquinas = ('VM1','VM2')							# Nombre de Maquinas a Copias
+$nummax = "2"									# Numero de copias NO rotativas, es decir, una vez existan 3 a la 4 borrarÃ¡ la mas antigua
+$unidaddestino="C:"								# Unidad Donde estan las Imagenes a copiar
+$unidadorigen="C:"								# Unidad destino donde guardar la copia
+$dirdestino="$unidaddestino\SHELL\DESTINO"					# Directorio Completo donde alberga las copias
+$source = "$unidadorigen\SHELL\ORIGEN\*"                                    	# Directorio Completo donde estan los discos a copiar
+$date = Get-Date -Format yyyyMMdd 						# Fecha
+$smtp = "188.93.78.29" 								# Servidor SMTP para envio de correos
+$from = "backups@main-informatica.com <backups@main-informatica.com>"		# Desde que cuenta 
+$to = "jtormo@main-informatica.com <jtormo@main-informatica.com>" 		# A que cuenta
+$pref="SEMANAL"	 								# Prefijo de Copia (se puede usar para indicar la frecuencia de la copia)
+$warnspace="120"                                                                # Nivel de Alarma en espacio Libre de Destino Medido en GB
 
 
 
@@ -133,11 +134,14 @@ exit 0
  
  function Haz-copia {
         	$destination = "$dirdestino\BKP$pref$date" 
-			$path = test-Path $destination 
-		    cd $dirdestino\ 
-            mkdir BKP$pref$date 
-            copy-Item  -Recurse $source -Destination $destination
-			$dateend=Get-Date -Format "dd-MM-yyyy HH:mm"
+		$path = test-Path $destination 
+		cd $dirdestino\ 
+		mkdir BKP$pref$date 
+		## copy-Item  -Recurse $source -Destination $destination
+		ForEach ($expmaq in $maquinas ) { 
+                Export-VM -Name '$expmaq' -Path $destination
+            	}
+		$dateend=Get-Date -Format "dd-MM-yyyy HH:mm"
 
 
             If ( $warnspace -lt $FREEDESTINO) 

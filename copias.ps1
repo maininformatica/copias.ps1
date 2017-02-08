@@ -139,7 +139,7 @@ exit 0
 		mkdir BKP$pref$date 
 		## copy-Item  -Recurse $source -Destination $destination
 		ForEach ($expmaq in $maquinas ) { 
-                Export-VM -Name '$expmaq' -Path $destination
+                Export-VM -Name "$expmaq" -Path $destination
             	}
 		$dateend=Get-Date -Format "dd-MM-yyyy HH:mm"
 

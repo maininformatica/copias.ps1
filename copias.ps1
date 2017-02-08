@@ -116,14 +116,14 @@ $subject = "Backup ERROR $servername $date"
 } 
 
 # Comprobamos que tengamos espacio en DESTINO  
-If ( $FREEDESTINO -ge $TAMORIGEN)
-{
-echo "El Tamaño de la Copia ($TAMORIGEN GB) Excede el Libre en Destino ($FREEDESTINO GB). No puedo Hacer la copia"
-$subject = "Backup ERROR $servername $date"
-$body = "El Tamaño de la Copia ($TAMORIGEN GB) Excede el Libre en Destino ($FREEDESTINO GB). No puedo Hacer la copia" 
-send-MailMessage -SmtpServer $smtp -From $from -To $to -Subject $subject -Body $body -BodyAsHtml 
-exit 0
-}
+# If ( $FREEDESTINO -ge $TAMORIGEN)
+# {
+# echo "El Tamaño de la Copia ($TAMORIGEN GB) Excede el Libre en Destino ($FREEDESTINO GB). No puedo Hacer la copia"
+# $subject = "Backup ERROR $servername $date"
+# $body = "El Tamaño de la Copia ($TAMORIGEN GB) Excede el Libre en Destino ($FREEDESTINO GB). No puedo Hacer la copia" 
+# send-MailMessage -SmtpServer $smtp -From $from -To $to -Subject $subject -Body $body -BodyAsHtml 
+# exit 0
+# }
 
   
 ##################################################################################################################################

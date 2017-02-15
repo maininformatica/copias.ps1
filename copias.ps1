@@ -26,9 +26,7 @@ $servername="HYPERV1"								# Nombre HOST HyperV
 $maquinas = ('VM1','VM2')							# Nombre de Maquinas a Copias
 $nummax = "2"									# Numero de copias NO rotativas, es decir, una vez existan 3 a la 4 borrarÃ¡ la mas antigua
 $unidaddestino="C:"								# Unidad Donde estan las Imagenes a copiar
-$unidadorigen="C:"								# Unidad destino donde guardar la copia
 $dirdestino="$unidaddestino\SHELL\DESTINO"					# Directorio Completo donde alberga las copias
-$source = "$unidadorigen\SHELL\ORIGEN\*"                                    	# Directorio Completo donde estan los discos a copiar
 $date = Get-Date -Format yyyyMMdd 						# Fecha
 $smtp = "188.93.78.29" 								# Servidor SMTP para envio de correos
 $from = "backups@main-informatica.com <backups@main-informatica.com>"		# Desde que cuenta 
@@ -44,9 +42,17 @@ function tamanyo
     param([string]$pth) 
     "{0:n2}" -f ((gci -path $pth -recurse | measure-object -property length -sum).sum /1gb ) 
 }
+## Medimos los Discos A Copiar
+$SIZEVHD=0
 
-
-$TAMORIGEN=tamanyo $source
+ForEach ($expmaq in $maquinas ) { 
+$VHD=@(Get-VM –VMName "$expmaq" | Select-Object VMId | Get-VHD).path
+echo "Mirando $VHD"
+ForEach ($MUCHOSVHD in $VHD ) { 
+$SIZEVHD=$SIZEVHD + @(Get-VHD –Path $MUCHOSVHD).filesize
+}
+}
+$TAMORIGEN=@($SIZEVHD / 1gb ) | % {$_.ToString("#.##")}
 $TAMDESTINO=tamanyo $dirdestino
 $FREEDESTINOC=get-WmiObject win32_logicaldisk -Filter "DeviceID='$unidaddestino'" | Format-Table DeviceId,@{n="FreeSpace";e={[math]::Round($_.FreeSpace/1GB,2)}} | findstr ':  '
 $FREEDESTINO="{0:N2}" -f ($FREEDESTINOC.split(":", 3) -replace(" ","") | Select-Object -Last 1)
@@ -71,16 +77,6 @@ $body = "No se ha podido realizar el backups porque La Unidad de Destino de Back
 send-MailMessage -SmtpServer $smtp -From $from -To $to -Subject $subject -Body $body -BodyAsHtml 
 exit 0
 }
-
-# Comprobamos que existe la unidad de ORIGEN
-If (!(Test-Path "$unidadorigen"))
-{
-echo "No hay unidad Origen: $unidadorigen"
-$subject = "Backup ERROR $servername $date"
-$body = "No se ha podido realizar el backups porque La Unidad de Origen de Backups NO existe: $unidadorigen" 
-send-MailMessage -SmtpServer $smtp -From $from -To $to -Subject $subject -Body $body -BodyAsHtml 
-exit 0
-}
  
 # Comprobamos que existe el Directorio de DESTINO
 If (!(Test-Path $dirdestino))
@@ -88,17 +84,6 @@ If (!(Test-Path $dirdestino))
 echo "No esta el directorio Destino: $dirdestino"
 $subject = "Backup ERROR $servername $date"
 	$body = "No se ha podido realizar el backups porque el directorio de Destino de las copias NO existe: $dirdestino" 
-	#Send an Email to User  
-    send-MailMessage -SmtpServer $smtp -From $from -To $to -Subject $subject -Body $body -BodyAsHtml 
-	exit 0
-} 
-
-# Comprobamos que existe el Directorio de ORIGEN
-If (!(Test-Path $source))
-{
-echo "No esta el directorio Origen: $source"
-$subject = "Backup ERROR $servername $date"
-	$body = "No se ha podido realizar el backups porque el directorio de ORIGEN de las copias NO existe: $source" 
 	#Send an Email to User  
     send-MailMessage -SmtpServer $smtp -From $from -To $to -Subject $subject -Body $body -BodyAsHtml 
 	exit 0
@@ -137,9 +122,8 @@ $subject = "Backup ERROR $servername $date"
 		$path = test-Path $destination 
 		cd $dirdestino\ 
 		mkdir BKP$pref$date 
-		## copy-Item  -Recurse $source -Destination $destination
 		ForEach ($expmaq in $maquinas ) { 
-                Export-VM -Name "$expmaq" -Path $destination
+                 Export-VM -Name "$expmaq" -Path $destination
             	}
 		$dateend=Get-Date -Format "dd-MM-yyyy HH:mm"
 

@@ -1,6 +1,6 @@
 #+-------------------------------------------------------------------+   
 #|              SCRIPT DE COPIAS MAIN INFORMATICA GANDIA SL          | 
-#|              V1.4 jtormo@main-informatica.com                     |
+#|              V1.4 copias@copias.connectate.com                    |
 #|                                                                   |
 #|   METODO DE COPIAS: VM-EXPORT Power Shell                         |
 #|                                                                   |
@@ -14,7 +14,7 @@
 # Aspectos a tener en cuenta
 # Este script de copia para sistemas Windows Hyper-V utiliza como directorios por defecto
 # Discos: C:\Users\Public\Documents\Hyper-V\Virtual hard disks 
-# Destino de copias Z:\BACKUPS
+# Destino de copias C:\Copias
 # Si los directorios y unidades son correctos NO hace falta tocar nada
 # Este SCRIPT Mantendra un total de 3 copias. NO se permite VARIAS COPIAS por dia si NO se renombra el fichero del dia anterior 
 # Borra la 4ª Rotacion mas antigua. Si no quieres que borre Comenta la linea donde se encuentre [Remove-Item -Recurse -Force]
@@ -24,14 +24,14 @@
 # Variables de Entorno
 $servername="HYPERV1"								# Nombre HOST HyperV
 $maquinas = ('VM1','VM2')							# Nombre de Maquinas a Copias
-$nummax = "2"									# Numero de copias NO rotativas, es decir, una vez existan 3 a la 4 borrarÃ¡ la mas antigua
+$nummax = "3"									# Numero de copias NO rotativas, es decir, una vez existan 3 a la 4 borrarÃ¡ la mas antigua
 $unidaddestino="C:"								# Unidad Donde estan las Imagenes a copiar
-$dirdestino="$unidaddestino\SHELL\DESTINO"					# Directorio Completo donde alberga las copias
+$dirdestino="$unidaddestino\Copias"						# Directorio Completo donde alberga las copias
 $date = Get-Date -Format yyyyMMdd 						# Fecha
-$smtp = "188.93.78.29" 								# Servidor SMTP para envio de correos
-$from = "backups@main-informatica.com <backups@main-informatica.com>"		# Desde que cuenta 
-$to = "jtormo@main-informatica.com <jtormo@main-informatica.com>" 		# A que cuenta
-$pref="SEMANAL"	 								# Prefijo de Copia (se puede usar para indicar la frecuencia de la copia)
+$smtp = "copias.connectate.com" 						# Servidor SMTP para envio de correos
+$from = "copias@copias.connectate.com <copias@copias.connectate.com>"		# Desde que cuenta 
+$to = "@copias.connectate.com <@copias.connectate.com>" 			# A que cuenta
+$pref="DIARIA"	 								# Prefijo de Copia (se puede usar para indicar la frecuencia de la copia)
 $warnspace="120"                                                                # Nivel de Alarma en espacio Libre de Destino Medido en GB
 
 

@@ -30,7 +30,7 @@ $dirdestino="$unidaddestino\Copias"						# Directorio Completo donde alberga las
 $date = Get-Date -Format yyyyMMdd 						# Fecha
 $smtp = "copias.connectate.com" 						# Servidor SMTP para envio de correos
 $from = "copias@copias.connectate.com <copias@copias.connectate.com>"		# Desde que cuenta 
-$to = "@copias.connectate.com <@copias.connectate.com>" 			# A que cuenta
+$to = "NOMBRE@copias.connectate.com NOMBRE<@copias.connectate.com>" 		# A que cuenta
 $pref="DIARIA"	 								# Prefijo de Copia (se puede usar para indicar la frecuencia de la copia)
 $warnspace="120"                                                                # Nivel de Alarma en espacio Libre de Destino Medido en GB
 

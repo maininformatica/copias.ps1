@@ -75,20 +75,31 @@ if ($myWindowsPrincipal.IsInRole($adminRole))
 else
    {
    # No somos admin. Elevamos si UAC nos permite sin POPUP
-   
-   
    $newProcess = new-object System.Diagnostics.ProcessStartInfo "PowerShell";
    $newProcess.Arguments = $myInvocation.MyCommand.Definition;
    $newProcess.Verb = "runas";
    
    # Iniciamos la Ventana de ADMIN
-   ## [System.Diagnostics.Process]::Start($newProcess);
-  
+   [System.Diagnostics.Process]::Start($newProcess);
+   
+   }
+
+# Conrfirmamos que sea así
+
+if ($myWindowsPrincipal.IsInRole($adminRole))
+   {
+   # Somos ADMIN :-)
+   $Host.UI.RawUI.WindowTitle = $myInvocation.MyCommand.Definition + "(Elevated)"
+   $Host.UI.RawUI.BackgroundColor = "DarkBlue"
+   clear-host
+   }
+else
+   {
+   # Continuamos sin ser admin.
    $subject = "Backup ERROR $servername $date"
    $body = "No se ha podido realizar el backups porque No Veo el Rol de ADMINISTRADOR para $userid" 
    send-MailMessage -SmtpServer $smtp -From $from -To $to -Subject $subject -Body $body -BodyAsHtml 
    exit 0
-
    }
 
 

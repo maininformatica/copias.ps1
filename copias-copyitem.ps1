@@ -1,6 +1,6 @@
 #+-------------------------------------------------------------------+   
 #|              SCRIPT DE COPIAS MAIN INFORMATICA GANDIA SL          | 
-#|              V1.4 jtormo@main-informatica.com                     |
+#|              V1.4.1 jtormo@main-informatica.com                     |
 #|                                                                   |
 #|   METODO DE COPIAS: COPY-ITEM Power Shell                         |
 #|                                                                   |
@@ -19,7 +19,8 @@
 # Este SCRIPT Mantendra un total de 3 copias. NO se permite VARIAS COPIAS por dia si NO se renombra el fichero del dia anterior 
 # Borra la 4ª Rotacion mas antigua. Si no quieres que borre Comenta la linea donde se encuentre [Remove-Item -Recurse -Force]
  
- 
+ # Cambios de 1.4 > 1.4.1
+ # Comprobamos que ejecutamos el ROL de Administrador sino salimos con error Y MAIL
  
 # Variables de Entorno
 $servername="PEPE-win10"														# Nombre del Servidor
@@ -55,6 +56,36 @@ $TEXTTAMBODY="El tama&ntilde;o de la copia ser&aacute; de <b>$TAMORIGEN</b> GB y
 $datestart=Get-Date -Format "dd-MM-yyyy HH:mm"
 echo $TEXTTAM
 $numcopiasdef=[convert]::ToInt32($nummax, 10)+1
+
+
+### Buscamos ser Administrador #########################################################################################################
+
+$myWindowsID=[System.Security.Principal.WindowsIdentity]::GetCurrent()
+$myWindowsPrincipal=new-object System.Security.Principal.WindowsPrincipal($myWindowsID)
+$adminRole=[System.Security.Principal.WindowsBuiltInRole]::Administrator
+$userid=[System.Security.Principal.WindowsIdentity]::GetCurrent().Name
+
+if ($myWindowsPrincipal.IsInRole($adminRole))
+   {
+   # Somos ADMIN :-)
+   $Host.UI.RawUI.WindowTitle = $myInvocation.MyCommand.Definition + "(Elevated)"
+   $Host.UI.RawUI.BackgroundColor = "DarkBlue"
+   clear-host
+   }
+else
+   {
+   # No somos admin. Elevamos si UAC nos permite sin POPUP
+   $newProcess = new-object System.Diagnostics.ProcessStartInfo "PowerShell";
+   $newProcess.Arguments = $myInvocation.MyCommand.Definition;
+   $newProcess.Verb = "runas";
+   
+   # Iniciamos la Ventana de ADMIN
+   ##### [System.Diagnostics.Process]::Start($newProcess);
+   $subject = "Backup ERROR $servername $date"
+   $body = "No se ha podido realizar el backups porque No Veo el Rol de ADMINISTRADOR para $userid" 
+   send-MailMessage -SmtpServer $smtp -From $from -To $to -Subject $subject -Body $body -BodyAsHtml 
+   exit 0
+   }
 
 
   

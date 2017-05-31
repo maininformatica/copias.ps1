@@ -30,9 +30,9 @@ $unidadorigen="C:"																# Unidad destino donde guardar la copia
 $dirdestino="$unidaddestino\SHELL\DESTINO"									    # Directorio Completo donde alberga las copias
 $source = "$unidadorigen\SHELL\ORIGEN\*"                                     	# Directorio Completo donde estan los discos a copiar
 $date = Get-Date -Format yyyyMMdd 												# Fecha
-$smtp = "188.93.78.29" 															# Servidor SMTP para envio de correos
-$from = "backups@main-informatica.com <backups@main-informatica.com>"			# Desde que cuenta 
-$to = "jtormo@main-informatica.com <jtormo@main-informatica.com>" 				# A que cuenta
+$smtp = "copias.connectate.com" 															# Servidor SMTP para envio de correos
+$from = "copias@copias.connectate.com <copias@copias.connectate.com>"			# Desde que cuenta 
+$to = "copias@copias.connectate.com <copias@copias.connectate.com>" 				# A que cuenta
 $pref="SEMANAL"	 																# Prefijo de Copia (se puede usar para indicar la frecuencia de la copia)
 $warnspace="120"                                                                 # Nivel de Alarma en espacio Libre de Destino Medido en GB
 

@@ -274,7 +274,7 @@ catch
    }
    else
    {
-    $subject = "Backup ERROR INDETERMINADO $servername $date"
+    $subject = "Backup ERROR $servername $date"
 	$body = "Ha habido alg&uacute;n Error NO controlado en el proceso del Script. <hr size=1> <br>Detalles del LOG Recuperado<br><br> $error[0].Exception" 
 	#Send an Email to User  
     send-MailMessage -SmtpServer $smtp -From $from -To $to -Subject $subject -Body $body -BodyAsHtml 

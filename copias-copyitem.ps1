@@ -1,8 +1,8 @@
 #+-------------------------------------------------------------------+   
 #|              SCRIPT DE COPIAS MAIN INFORMATICA GANDIA SL          | 
-#|              V1.4.2 jtormo@main-informatica.com                     |
+#|              V1.4.1 copias@copias.connectate.com                    |
 #|                                                                   |
-#|   METODO DE COPIAS: COPY-ITEM Power Shell                         |
+#|   METODO DE COPIAS: VM-EXPORT Power Shell                         |
 #|                                                                   |
 #|   ATENCION: El sistema debe permitir ejecucion de scripts         |
 #|             Ejecuta como administrador POWER SHELL ISE            |
@@ -13,31 +13,27 @@
  
 # Aspectos a tener en cuenta
 # Este script de copia para sistemas Windows Hyper-V utiliza como directorios por defecto
-# Discos: C:\Users\Public\Documents\Hyper-V\Virtual hard disks 
 # Destino de copias Z:\BACKUPS
 # Si los directorios y unidades son correctos NO hace falta tocar nada
 # Este SCRIPT Mantendra un total de 3 copias. NO se permite VARIAS COPIAS por dia si NO se renombra el fichero del dia anterior 
 # Borra la 4ª Rotacion mas antigua. Si no quieres que borre Comenta la linea donde se encuentre [Remove-Item -Recurse -Force]
  
  # Cambios de 1.4 > 1.4.1
- # Comprobamos que ejecutamos el ROL de Administrador sino salimos con error Y MAIL
- # Cambios de 1.4.1 > 1.4.2
- # Limpiado BUG Comprobacion espacio disponible según tamaño origen de los discos
+ # Comprobamos que ejecutamos el ROL de Administrador sino salimos con error Y MAIL 
  
  
 # Variables de Entorno
-$servername="PEPE-win10"														# Nombre del Servidor
-$nummax = "2" 																	# Numero de copias NO rotativas, es decir, una vez existan 3 a la 4 borrarÃ¡ la mas antigua
-$unidaddestino="C:"																# Unidad Donde estan las Imagenes a copiar
-$unidadorigen="C:"																# Unidad destino donde guardar la copia
-$dirdestino="$unidaddestino\SHELL\DESTINO"									    # Directorio Completo donde alberga las copias
-$source = "$unidadorigen\SHELL\ORIGEN\*"                                     	# Directorio Completo donde estan los discos a copiar
-$date = Get-Date -Format yyyyMMdd 												# Fecha
-$smtp = "copias.connectate.com" 															# Servidor SMTP para envio de correos
-$from = "copias@copias.connectate.com <copias@copias.connectate.com>"			# Desde que cuenta 
-$to = "copias@copias.connectate.com <copias@copias.connectate.com>" 				# A que cuenta
-$pref="SEMANAL"	 																# Prefijo de Copia (se puede usar para indicar la frecuencia de la copia)
-$warnspace="120"                                                                 # Nivel de Alarma en espacio Libre de Destino Medido en GB
+$servername="HV-MAIN"							# Nombre HOST HyperV
+$maquinas = ('Windows 2012 Server R2 64 bit','The Dude')	# Nombre de Maquinas a Copias
+$nummax = "7"									# Numero de copias NO rotativas, es decir, una vez existan 7 a la 8 borrarÃ¡ la mas antigua
+$unidaddestino="F:"								# Unidad Donde estan las Imagenes a copiar
+$dirdestino="$unidaddestino\"		            # Directorio Completo donde alberga las copias
+$date = Get-Date -Format yyyyMMdd 				# Fecha
+$smtp = "copias.connectate.com" 				# Servidor SMTP para envio de correos
+$from = "copias@copias.connectate.com <copias@copias.connectate.com>"		    # Desde que cuenta 
+$to = "copias@copias.connectate.com <copias@copias.connectate.com>" 		    # A que cuenta
+$pref="DIARIA"	 								# Prefijo de Copia (se puede usar para indicar la frecuencia de la copia)
+$warnspace="120"                                # Nivel de Alarma en espacio Libre de Destino Medido en GB
 
 
 
@@ -48,8 +44,16 @@ function tamanyo
     "{0:n2}" -f ((gci -path $pth -recurse | measure-object -property length -sum).sum /1gb ) 
 }
 
-
-$TAMORIGEN=tamanyo $source
+# Tamaño origen
+$SIZEVHD=0
+ForEach ($expmaq in $maquinas ) { 
+$VHD=@(Get-VM –VMName "$expmaq" | Select-Object VMId | Get-VHD).path
+echo "Mirando $VHD"
+ForEach ($MUCHOSVHD in $VHD ) { 
+$SIZEVHD=$SIZEVHD + @(Get-VHD –Path $MUCHOSVHD).filesize
+}
+}
+$TAMORIGEN=@($SIZEVHD / 1gb ) | % {$_.ToString("#.##")}
 $TAMDESTINO=tamanyo $dirdestino
 $FREEDESTINOC=get-WmiObject win32_logicaldisk -Filter "DeviceID='$unidaddestino'" | Format-Table DeviceId,@{n="FreeSpace";e={[math]::Round($_.FreeSpace/1GB,2)}} | findstr ':  '
 $FREEDESTINO="{0:N2}" -f ($FREEDESTINOC.split(":", 3) -replace(" ","") | Select-Object -Last 1)
@@ -59,7 +63,6 @@ $TEXTTAMBODY="El tama&ntilde;o de la copia ser&aacute; de <b>$TAMORIGEN</b> GB y
 $datestart=Get-Date -Format "dd-MM-yyyy HH:mm"
 echo $TEXTTAM
 $numcopiasdef=[convert]::ToInt32($nummax, 10)+1
-
 
 ### Buscamos ser Administrador #########################################################################################################
 
@@ -104,8 +107,6 @@ else
    send-MailMessage -SmtpServer $smtp -From $from -To $to -Subject $subject -Body $body -BodyAsHtml 
    exit 0
    }
-
-
   
 ### Comprobaciones ##########################################################################################################
   
@@ -120,33 +121,12 @@ send-MailMessage -SmtpServer $smtp -From $from -To $to -Subject $subject -Body $
 exit 0
 }
 
-# Comprobamos que existe la unidad de ORIGEN
-If (!(Test-Path "$unidadorigen"))
-{
-echo "No hay unidad Origen: $unidadorigen"
-$subject = "Backup ERROR $servername $date"
-$body = "No se ha podido realizar el backups porque La Unidad de Origen de Backups NO existe: $unidadorigen" 
-send-MailMessage -SmtpServer $smtp -From $from -To $to -Subject $subject -Body $body -BodyAsHtml 
-exit 0
-}
- 
 # Comprobamos que existe el Directorio de DESTINO
 If (!(Test-Path $dirdestino))
 {
 echo "No esta el directorio Destino: $dirdestino"
 $subject = "Backup ERROR $servername $date"
 	$body = "No se ha podido realizar el backups porque el directorio de Destino de las copias NO existe: $dirdestino" 
-	#Send an Email to User  
-    send-MailMessage -SmtpServer $smtp -From $from -To $to -Subject $subject -Body $body -BodyAsHtml 
-	exit 0
-} 
-
-# Comprobamos que existe el Directorio de ORIGEN
-If (!(Test-Path $source))
-{
-echo "No esta el directorio Origen: $source"
-$subject = "Backup ERROR $servername $date"
-	$body = "No se ha podido realizar el backups porque el directorio de ORIGEN de las copias NO existe: $source" 
 	#Send an Email to User  
     send-MailMessage -SmtpServer $smtp -From $from -To $to -Subject $subject -Body $body -BodyAsHtml 
 	exit 0
@@ -164,14 +144,14 @@ $subject = "Backup ERROR $servername $date"
 } 
 
 # Comprobamos que tengamos espacio en DESTINO  
-If ( $FREEDESTINO -lt $TAMORIGEN )
-{
-echo "El Tamaño de la Copia ($TAMORIGEN GB) Excede el Libre en Destino ($FREEDESTINO GB). No puedo Hacer la copia"
-$subject = "Backup ERROR $servername $date"
-$body = "El Tamaño de la Copia ($TAMORIGEN GB) Excede el Libre en Destino ($FREEDESTINO GB). No puedo Hacer la copia" 
-send-MailMessage -SmtpServer $smtp -From $from -To $to -Subject $subject -Body $body -BodyAsHtml 
-exit 0
-}
+# If ( $FREEDESTINO -ge $TAMORIGEN)
+# {
+# echo "El Tamaño de la Copia ($TAMORIGEN GB) Excede el Libre en Destino ($FREEDESTINO GB). No puedo Hacer la copia"
+# $subject = "Backup ERROR $servername $date"
+# $body = "El Tamaño de la Copia ($TAMORIGEN GB) Excede el Libre en Destino ($FREEDESTINO GB). No puedo Hacer la copia" 
+# send-MailMessage -SmtpServer $smtp -From $from -To $to -Subject $subject -Body $body -BodyAsHtml 
+# exit 0
+# }
 
   
 ##################################################################################################################################
@@ -182,11 +162,14 @@ exit 0
  
  function Haz-copia {
         	$destination = "$dirdestino\BKP$pref$date" 
-			$path = test-Path $destination 
-		    cd $dirdestino\ 
-            mkdir BKP$pref$date 
-            copy-Item  -Recurse $source -Destination $destination
-			$dateend=Get-Date -Format "dd-MM-yyyy HH:mm"
+		$path = test-Path $destination 
+		cd $dirdestino\ 
+		mkdir BKP$pref$date 
+		## copy-Item  -Recurse $source -Destination $destination
+		ForEach ($expmaq in $maquinas ) { 
+                Export-VM -Name "$expmaq" -Path $destination
+            	}
+		$dateend=Get-Date -Format "dd-MM-yyyy HH:mm"
 
 
             If ( $warnspace -lt $FREEDESTINO) 
@@ -209,9 +192,6 @@ exit 0
 			"---------------------------------------------------------------" | out-File -Append "$destination\backup_log.txt"
 			"Datos de Uso de la Unidad de Destino Backups" | out-File -Append "$destination\backup_log.txt"
 			get-WmiObject win32_logicaldisk -Filter "DeviceID='$unidaddestino'" | out-File -Append "$destination\backup_log.txt"
-			"---------------------------------------------------------------" | out-File -Append "$destination\backup_log.txt"
-			"Datos de Uso de la Unidad de Destino Backups" | out-File -Append "$destination\backup_log.txt"
-			get-WmiObject win32_logicaldisk -Filter "DeviceID='$unidadorigen'" | out-File -Append "$destination\backup_log.txt"
 			"---------------------------------------------------------------" | out-File -Append "$destination\backup_log.txt"
 			"Ficheros Copiados" | out-File -Append  "$destination\backup_log.txt"
 			$backup_log = Dir -Recurse $destination | out-File -Append "$destination\backup_log.txt"

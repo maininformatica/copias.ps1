@@ -1,6 +1,6 @@
 #+-------------------------------------------------------------------+   
 #|              SCRIPT DE COPIAS MAIN INFORMATICA GANDIA SL          | 
-#|              V1.4.1 copias@copias.connectate.com                    |
+#|              V1.4.2 copias@copias.connectate.com                    |
 #|                                                                   |
 #|   METODO DE COPIAS: VM-EXPORT Power Shell                         |
 #|                                                                   |
@@ -20,6 +20,7 @@
  
  # Cambios de 1.4 > 1.4.1
  # Comprobamos que ejecutamos el ROL de Administrador sino salimos con error Y MAIL
+ # Cambios de 1.4.1 > 1.4.2
  # Para comprobar si hay espacio disposible se hace con la variable warnspace. Este establece un limite de Uso el cual a
  # 	partir de ahí el sistema NO COPIA
  

@@ -270,7 +270,7 @@ catch
 {
    if ($error[0].Exception -match "CONDICIONALES_CORRECTOS")
    {
-       Write-Error "Oh No! You did it!"
+       Write-Error "Este Error ya ha salido. Se ha enviado el MAIL Correspondiente"
    }
    else
    {

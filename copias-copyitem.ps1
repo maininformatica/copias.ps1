@@ -19,7 +19,9 @@
 # Borra la 4ª Rotacion mas antigua. Si no quieres que borre Comenta la linea donde se encuentre [Remove-Item -Recurse -Force]
  
  # Cambios de 1.4 > 1.4.1
- # Comprobamos que ejecutamos el ROL de Administrador sino salimos con error Y MAIL 
+ # Comprobamos que ejecutamos el ROL de Administrador sino salimos con error Y MAIL
+ # Para comprobar si hay espacio disposible se hace con la variable warnspace. Este establece un limite de Uso el cual a
+ # 	partir de ahí el sistema NO COPIA
  
  
 # Variables de Entorno

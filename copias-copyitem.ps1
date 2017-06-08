@@ -1,6 +1,6 @@
 #+-------------------------------------------------------------------+   
 #|              SCRIPT DE COPIAS MAIN INFORMATICA GANDIA SL          | 
-#|              V1.4.1 jtormo@main-informatica.com                     |
+#|              V1.4.2 jtormo@main-informatica.com                     |
 #|                                                                   |
 #|   METODO DE COPIAS: COPY-ITEM Power Shell                         |
 #|                                                                   |
@@ -21,6 +21,9 @@
  
  # Cambios de 1.4 > 1.4.1
  # Comprobamos que ejecutamos el ROL de Administrador sino salimos con error Y MAIL
+ # Cambios de 1.4.1 > 1.4.2
+ # Limpiado BUG Comprobacion espacio disponible según tamaño origen de los discos
+ 
  
 # Variables de Entorno
 $servername="PEPE-win10"														# Nombre del Servidor
@@ -161,7 +164,7 @@ $subject = "Backup ERROR $servername $date"
 } 
 
 # Comprobamos que tengamos espacio en DESTINO  
-If ( $FREEDESTINO -ge $TAMORIGEN)
+If ( $FREEDESTINO -lt $TAMORIGEN )
 {
 echo "El Tamaño de la Copia ($TAMORIGEN GB) Excede el Libre en Destino ($FREEDESTINO GB). No puedo Hacer la copia"
 $subject = "Backup ERROR $servername $date"

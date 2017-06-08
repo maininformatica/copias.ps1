@@ -1,6 +1,6 @@
 #+-------------------------------------------------------------------+   
 #|              SCRIPT DE COPIAS MAIN INFORMATICA GANDIA SL          | 
-#|              V1.4 copias@copias.connectate.com                    |
+#|              V1.4.2 copias@copias.connectate.com                  |
 #|                                                                   |
 #|   METODO DE COPIAS: VM-EXPORT Power Shell                         |
 #|                                                                   |
@@ -13,26 +13,30 @@
  
 # Aspectos a tener en cuenta
 # Este script de copia para sistemas Windows Hyper-V utiliza como directorios por defecto
-# Discos: C:\Users\Public\Documents\Hyper-V\Virtual hard disks 
-# Destino de copias C:\Copias
+# Destino de copias Z:\BACKUPS
 # Si los directorios y unidades son correctos NO hace falta tocar nada
 # Este SCRIPT Mantendra un total de 3 copias. NO se permite VARIAS COPIAS por dia si NO se renombra el fichero del dia anterior 
 # Borra la 4ª Rotacion mas antigua. Si no quieres que borre Comenta la linea donde se encuentre [Remove-Item -Recurse -Force]
  
+ # Cambios de 1.4 > 1.4.1
+ # Comprobamos que ejecutamos el ROL de Administrador sino salimos con error Y MAIL
+ # Cambios de 1.4.1 > 1.4.2
+ # Para comprobar si hay espacio disposible se hace con la variable warnspace. Este establece un limite de Uso el cual a
+ # 	partir de ahí el sistema NO COPIA
  
  
 # Variables de Entorno
-$servername="HYPERV1"								# Nombre HOST HyperV
-$maquinas = ('VM1','VM2')							# Nombre de Maquinas a Copias
-$nummax = "3"									# Numero de copias NO rotativas, es decir, una vez existan 3 a la 4 borrarÃ¡ la mas antigua
-$unidaddestino="C:"								# Unidad Donde estan las Imagenes a copiar
-$dirdestino="$unidaddestino\Copias"						# Directorio Completo donde alberga las copias
-$date = Get-Date -Format yyyyMMdd 						# Fecha
-$smtp = "copias.connectate.com" 						# Servidor SMTP para envio de correos
-$from = "copias@copias.connectate.com <copias@copias.connectate.com>"		# Desde que cuenta 
-$to = "NOMBRE@copias.connectate.com <NOMBRE@copias.connectate.com>" 		# A que cuenta
+$servername="HV-EJEMPLO"							# Nombre HOST HyperV
+$maquinas = ('MACHINE1','MACHINE2')	# Nombre de Maquinas a Copias
+$nummax = "3"									# Numero de copias NO rotativas, es decir, una vez existan 7 a la 8 borrarÃ¡ la mas antigua
+$unidaddestino="F:"								# Unidad Donde estan las Imagenes a copiar
+$dirdestino="$unidaddestino\"		            # Directorio Completo donde alberga las copias
+$date = Get-Date -Format yyyyMMdd 				# Fecha
+$smtp = "copias.connectate.com" 				# Servidor SMTP para envio de correos
+$from = "copias@copias.connectate.com <copias@copias.connectate.com>"		    # Desde que cuenta 
+$to = "copias@copias.connectate.com <copias@copias.connectate.com>" 		    # A que cuenta
 $pref="DIARIA"	 								# Prefijo de Copia (se puede usar para indicar la frecuencia de la copia)
-$warnspace="120"                                                                # Nivel de Alarma en espacio Libre de Destino Medido en GB
+$warnspace="120"                                # Nivel de Alarma en espacio Libre de Destino Medido en GB
 
 
 
@@ -42,9 +46,9 @@ function tamanyo
     param([string]$pth) 
     "{0:n2}" -f ((gci -path $pth -recurse | measure-object -property length -sum).sum /1gb ) 
 }
-## Medimos los Discos A Copiar
-$SIZEVHD=0
 
+# Tamaño origen
+$SIZEVHD=0
 ForEach ($expmaq in $maquinas ) { 
 $VHD=@(Get-VM –VMName "$expmaq" | Select-Object VMId | Get-VHD).path
 echo "Mirando $VHD"
@@ -63,7 +67,49 @@ $datestart=Get-Date -Format "dd-MM-yyyy HH:mm"
 echo $TEXTTAM
 $numcopiasdef=[convert]::ToInt32($nummax, 10)+1
 
+### Buscamos ser Administrador #########################################################################################################
 
+$myWindowsID=[System.Security.Principal.WindowsIdentity]::GetCurrent()
+$myWindowsPrincipal=new-object System.Security.Principal.WindowsPrincipal($myWindowsID)
+$adminRole=[System.Security.Principal.WindowsBuiltInRole]::Administrator
+$userid=[System.Security.Principal.WindowsIdentity]::GetCurrent().Name
+
+if ($myWindowsPrincipal.IsInRole($adminRole))
+   {
+   # Somos ADMIN :-)
+   $Host.UI.RawUI.WindowTitle = $myInvocation.MyCommand.Definition + "(Elevated)"
+   $Host.UI.RawUI.BackgroundColor = "DarkBlue"
+   clear-host
+   }
+else
+   {
+   # No somos admin. Elevamos si UAC nos permite sin POPUP
+   $newProcess = new-object System.Diagnostics.ProcessStartInfo "PowerShell";
+   $newProcess.Arguments = $myInvocation.MyCommand.Definition;
+   $newProcess.Verb = "runas";
+   
+   # Iniciamos la Ventana de ADMIN
+   [System.Diagnostics.Process]::Start($newProcess);
+   
+   }
+
+# Conrfirmamos que sea así
+
+if ($myWindowsPrincipal.IsInRole($adminRole))
+   {
+   # Somos ADMIN :-)
+   $Host.UI.RawUI.WindowTitle = $myInvocation.MyCommand.Definition + "(Elevated)"
+   $Host.UI.RawUI.BackgroundColor = "DarkBlue"
+   clear-host
+   }
+else
+   {
+   # Continuamos sin ser admin.
+   $subject = "Backup ERROR $servername $date"
+   $body = "No se ha podido realizar el backups porque No Veo el Rol de ADMINISTRADOR para $userid" 
+   send-MailMessage -SmtpServer $smtp -From $from -To $to -Subject $subject -Body $body -BodyAsHtml 
+   exit 0
+   }
   
 ### Comprobaciones ##########################################################################################################
   
@@ -77,7 +123,7 @@ $body = "No se ha podido realizar el backups porque La Unidad de Destino de Back
 send-MailMessage -SmtpServer $smtp -From $from -To $to -Subject $subject -Body $body -BodyAsHtml 
 exit 0
 }
- 
+
 # Comprobamos que existe el Directorio de DESTINO
 If (!(Test-Path $dirdestino))
 {
@@ -100,15 +146,17 @@ $subject = "Backup ERROR $servername $date"
 	exit 0
 } 
 
-# Comprobamos que tengamos espacio en DESTINO  
-# If ( $FREEDESTINO -ge $TAMORIGEN)
-# {
-# echo "El Tamaño de la Copia ($TAMORIGEN GB) Excede el Libre en Destino ($FREEDESTINO GB). No puedo Hacer la copia"
-# $subject = "Backup ERROR $servername $date"
-# $body = "El Tamaño de la Copia ($TAMORIGEN GB) Excede el Libre en Destino ($FREEDESTINO GB). No puedo Hacer la copia" 
-# send-MailMessage -SmtpServer $smtp -From $from -To $to -Subject $subject -Body $body -BodyAsHtml 
-# exit 0
-# }
+If ( $warnspace -lt $FREEDESTINO) 
+{
+    $subject = "Backup Correcto $servername $date"
+} else {
+    $subject = "Backup ERROR $servername $date"
+    echo "ATENCION: Se ha alcanzado tamaño de Aviso por Poco espacio en Unidad de Destino de Copias: $warnspace GB"
+    $body = "ATENCION: Se ha alcanzado tama&ntilde;o de Aviso por Poco espacio en Unidad de Destino de Copias: $warnspace GB"
+    #Send an Email to User  
+    send-MailMessage -SmtpServer $smtp -From $from -To $to -Subject $subject -Body $body -BodyAsHtml 
+    exit 0
+}
 
   
 ##################################################################################################################################
@@ -122,8 +170,9 @@ $subject = "Backup ERROR $servername $date"
 		$path = test-Path $destination 
 		cd $dirdestino\ 
 		mkdir BKP$pref$date 
+		## copy-Item  -Recurse $source -Destination $destination
 		ForEach ($expmaq in $maquinas ) { 
-                 Export-VM -Name "$expmaq" -Path $destination
+                Export-VM -Name "$expmaq" -Path $destination
             	}
 		$dateend=Get-Date -Format "dd-MM-yyyy HH:mm"
 
@@ -148,9 +197,6 @@ $subject = "Backup ERROR $servername $date"
 			"---------------------------------------------------------------" | out-File -Append "$destination\backup_log.txt"
 			"Datos de Uso de la Unidad de Destino Backups" | out-File -Append "$destination\backup_log.txt"
 			get-WmiObject win32_logicaldisk -Filter "DeviceID='$unidaddestino'" | out-File -Append "$destination\backup_log.txt"
-			"---------------------------------------------------------------" | out-File -Append "$destination\backup_log.txt"
-			"Datos de Uso de la Unidad de Destino Backups" | out-File -Append "$destination\backup_log.txt"
-			get-WmiObject win32_logicaldisk -Filter "DeviceID='$unidadorigen'" | out-File -Append "$destination\backup_log.txt"
 			"---------------------------------------------------------------" | out-File -Append "$destination\backup_log.txt"
 			"Ficheros Copiados" | out-File -Append  "$destination\backup_log.txt"
 			$backup_log = Dir -Recurse $destination | out-File -Append "$destination\backup_log.txt"

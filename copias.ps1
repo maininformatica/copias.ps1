@@ -23,6 +23,7 @@
  # Cambios de 1.4.1 > 1.4.2
  # Para comprobar si hay espacio disposible se hace con la variable warnspace. Este establece un limite de Uso el cual a
  # 	partir de ahí el sistema NO COPIA
+ # Control de Errores. Realiza controles de Errores Indeterminados y sale con un MailLog
  
  
 # Variables de Entorno
@@ -110,7 +111,7 @@ else
    send-MailMessage -SmtpServer $smtp -From $from -To $to -Subject $subject -Body $body -BodyAsHtml 
    exit 0
    }
-  
+ 
 ### Comprobaciones ##########################################################################################################
   
 
@@ -158,7 +159,9 @@ If ( $warnspace -lt $FREEDESTINO)
     exit 0
 }
 
-  
+## Control Errores Indeterminados NO detectados bajo condicional
+try
+{  
 ##################################################################################################################################
   
 # Backup Process started 
@@ -259,3 +262,24 @@ If ( $warnspace -lt $FREEDESTINO)
 			
  }
  }
+
+## Fin cotrol Errores
+ }
+catch
+{
+   if ($error[0].Exception -match "some particular error")
+   {
+       Write-Error "Oh No! You did it!"
+   }
+   else
+   {
+    $subject = "Backup ERROR INDETERMINADO $servername $date"
+	$body = "Ha habido alg&uacute;n Error NO controlado en el proceso del Script. <hr size=1> <br>Detalles del LOG Recuperado<br><br> $error[0].Exception" 
+	#Send an Email to User  
+    send-MailMessage -SmtpServer $smtp -From $from -To $to -Subject $subject -Body $body -BodyAsHtml 
+
+       Throw ("Ooops! " + $error[0].Exception)
+
+   }
+}
+

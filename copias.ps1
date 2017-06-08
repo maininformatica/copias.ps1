@@ -268,7 +268,7 @@ try
  }
 catch
 {
-   if ($error[0].Exception -match "some particular error")
+   if ($error[0].Exception -match "CONDICIONALES_CORRECTOS")
    {
        Write-Error "Oh No! You did it!"
    }

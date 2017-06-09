@@ -137,17 +137,6 @@ $subject = "Backup ERROR $servername $date"
 	exit 0
 } 
 
-# Comprobamos si existe Copia con Mismo Nombre
-If (Test-Path $dirdestino\BKP$pref$date)
-{
-echo "Ya existe una Copia con ese Noombre: $dirdestino\BKP$date"
-$subject = "Backup ERROR $servername $date"
-	$body = "No se ha podido realizar el backups porque ya existe una copia con ese nombre $dirdestino\BKP$date. Debe renombrarla o Eliminarla" 
-	#Send an Email to User  
-    send-MailMessage -SmtpServer $smtp -From $from -To $to -Subject $subject -Body $body -BodyAsHtml 
-	exit 0
-} 
-
 ## Control Errores Indeterminados NO detectados bajo condicional
 try
 {  

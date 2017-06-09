@@ -243,21 +243,14 @@ try
 
 ## Fin cotrol Errores
  }
-catch
-{
-   if ($error[0].Exception -match "CONDICIONALES_CORRECTOS")
-   {
-       Write-Error "Este Error ya ha salido. Se ha enviado el MAIL Correspondiente"
-   }
-   else
-   {
-    $subject = "Backup ERROR $servername $date"
-	$body = "Ha habido alg&uacute;n Error NO controlado en el proceso del Script. <hr size=1> <br>Detalles del LOG Recuperado<br><br> $error[0].Exception" 
-	#Send an Email to User  
-    send-MailMessage -SmtpServer $smtp -From $from -To $to -Subject $subject -Body $body -BodyAsHtml 
+ }
+catch [Exception] {
+ write-host $_.Exception.GetType().FullName; 
+ write-host $_.Exception.Message; 
+ $subject = "Backup ERROR INDETERMINADO $servername $date"
+ $body = "Ha habido alg&uacute;n Error NO controlado en el proceso del Script. <hr size=1> <br>Detalles del LOG Recuperado<br><br> $error[0].Exception" 
+ #Send an Email to User  
+ send-MailMessage -SmtpServer $smtp -From $from -To $to -Subject $subject -Body $body -BodyAsHtml 
+ ### Throw ("Ooops! " + $error[0].Exception)
 
-       Throw ("Ooops! " + $error[0].Exception)
-
-   }
 }
-

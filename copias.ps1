@@ -148,18 +148,6 @@ $subject = "Backup ERROR $servername $date"
 	exit 0
 } 
 
-If ( $warnspace -lt $FREEDESTINO) 
-{
-    $subject = "Backup Correcto $servername $date"
-} else {
-    $subject = "Backup ERROR $servername $date"
-    echo "ATENCION: Se ha alcanzado tamaño de Aviso por Poco espacio en Unidad de Destino de Copias: $warnspace GB"
-    $body = "ATENCION: Se ha alcanzado tama&ntilde;o de Aviso por Poco espacio en Unidad de Destino de Copias: $warnspace GB"
-    #Send an Email to User  
-    send-MailMessage -SmtpServer $smtp -From $from -To $to -Subject $subject -Body $body -BodyAsHtml 
-    exit 0
-}
-
 ## Control Errores Indeterminados NO detectados bajo condicional
 try
 {  

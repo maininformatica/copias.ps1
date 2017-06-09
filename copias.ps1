@@ -190,7 +190,7 @@ try
 			"Fin del Informe" | out-File -Append "$destination\backup_log.txt"
 			$attachment = "$destination\backup_log.txt" 
 
-  		$BUSCAVHD = (Dir -Recurse $dirdestino).FullName | Select-String -Pattern "VHD" 
+  		$BUSCAVHD = (Dir -Recurse $destination).FullName | Select-String -Pattern "VHD" 
             	$BUSCAVHD = $BUSCAVHD -replace "$unidaddestino","<br>"
 
             

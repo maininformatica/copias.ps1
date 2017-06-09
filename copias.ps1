@@ -1,6 +1,6 @@
 #+-------------------------------------------------------------------+   
 #|              SCRIPT DE COPIAS MAIN INFORMATICA GANDIA SL          | 
-#|              V1.4.3B copias@copias.connectate.com                  |
+#|              V1.4.4 copias@copias.connectate.com                  |
 #|                                                                   |
 #|   METODO DE COPIAS: VM-EXPORT Power Shell                         |
 #|                                                                   |
@@ -25,6 +25,11 @@
  # 	partir de ahí el sistema NO COPIA
  # Cambios de 1.4.2 > 1.4.3
  # Control de Errores. Realiza controles de Errores Indeterminados y sale con un MailLog
+ # Cambios de 1.4.3 > 1.4.4
+ # Control de Errores. Reparácion controles de Errores Indeterminados IO.EXCEPTION
+ # Muestra en el BODY del Correo los VHD o VHDX copiados en Destino)
+ 
+ 
  
  
 # Variables de Entorno
@@ -185,7 +190,8 @@ try
 			"Fin del Informe" | out-File -Append "$destination\backup_log.txt"
 			$attachment = "$destination\backup_log.txt" 
 
-
+  		$BUSCAVHD = (Dir -Recurse $dirdestino).FullName | Select-String -Pattern "VHD" 
+            	$BUSCAVHD = $BUSCAVHD -replace "$unidaddestino","<br>"
 
             
 			$body = "<font face=arial><h2>$WARNINGTAMBODY<br></h2> Resultado de la copia para: <b>$servername</b> <br>

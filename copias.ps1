@@ -245,7 +245,6 @@ try
 		Haz-copia
 			
  }
- }
 
 ## Fin cotrol Errores
  }

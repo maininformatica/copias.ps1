@@ -200,6 +200,9 @@ try
                     La copia Finaliz&oacute;:  <b>$dateend</b><br>
                     El sistema guarda un N&uacute;mero M&aacute;ximo de copias de: <b>$numcopiasdef</b>. Corresponden a <b>$nummax</b> NO Rotativas<br>
                     $TEXTTAMBODY<br><br>
+		    Listado de VHD Copiados<br>
+		    $BUSCAVHD
+		    <br><br>
                     Compruebe el Fichero Adjunto para mayor Detalle
                     
                     " 

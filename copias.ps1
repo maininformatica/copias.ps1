@@ -10,7 +10,6 @@
 #|                                                                   |
 #+-------------------------------------------------------------------+ 
  
- 
 # Aspectos a tener en cuenta
 # Este script de copia para sistemas Windows Hyper-V utiliza como directorios por defecto
 # Destino de copias Z:\BACKUPS
@@ -28,7 +27,11 @@
 # Cambios de 1.4.3 > 1.4.4
 # Control de Errores. Reparácion controles de Errores Indeterminados IO.EXCEPTION
 # Muestra en el BODY del Correo los VHD o VHDX copiados en Destino)
- 
+
+# Version 1.5 Requiere Registro de Variables
+
+
+
 # Variables de Entorno
 try {
     . ("c:\COPIAS\variables.ps1")

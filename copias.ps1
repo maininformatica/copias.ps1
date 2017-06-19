@@ -33,18 +33,18 @@
  
  
 # Variables de Entorno
-
 try {
-    . ("variables.ps1")
+    . ("c:\COPIAS\variables.ps1")
 
 }
 catch {
-    Write-Host "No se ha encontrado el fichero de Variables o es inválido" 
+    Write-Host "No se ha encontrado el fichero de Variables o es invÃ¡lido" 
     # Continuamos sin ser admin.
    $subject = "Backup ERROR -- Variables NO Encontradas"
    $body = "No se ha podido realizar el backups porque No puedo leer el Fichero de Variables" 
-   send-MailMessage -SmtpServer $smtp -From copias@copias.connectate.com -To copias@copias.connectate.com -Subject $subject -Body $body -BodyAsHtml 
-    
+   $smtptmp="copias.connectate.com"
+   send-MailMessage -SmtpServer $smtptmp -From copias@copias.connectate.com -To copias@copias.connectate.com -Subject $subject -Body $body -BodyAsHtml 
+   exit 0 
 }
 
 
@@ -64,7 +64,7 @@ echo "Mirando $VHD"
 ForEach ($MUCHOSVHD in $VHD ) { 
 $SIZEVHD=$SIZEVHD + @(Get-VHD –Path $MUCHOSVHD).filesize
 }
-}
+
 $TAMORIGEN=@($SIZEVHD / 1gb ) | % {$_.ToString("#.##")}
 $TAMDESTINO=tamanyo $dirdestino
 $FREEDESTINOC=get-WmiObject win32_logicaldisk -Filter "DeviceID='$unidaddestino'" | Format-Table DeviceId,@{n="FreeSpace";e={[math]::Round($_.FreeSpace/1GB,2)}} | findstr ':  '

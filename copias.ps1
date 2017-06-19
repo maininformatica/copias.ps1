@@ -1,6 +1,6 @@
 #+-------------------------------------------------------------------+   
 #|              SCRIPT DE COPIAS MAIN INFORMATICA GANDIA SL          | 
-#|              V1.4.4 copias@copias.connectate.com                  |
+#|              V1.5   copias@copias.connectate.com                  |
 #|                                                                   |
 #|   METODO DE COPIAS: VM-EXPORT Power Shell                         |
 #|                                                                   |
@@ -33,17 +33,19 @@
  
  
 # Variables de Entorno
-$servername="HV-EJEMPLO"							# Nombre HOST HyperV
-$maquinas = ('MACHINE1','MACHINE2')	# Nombre de Maquinas a Copias
-$nummax = "3"									# Numero de copias NO rotativas, es decir, una vez existan 7 a la 8 borrarÃ¡ la mas antigua
-$unidaddestino="F:"								# Unidad Donde estan las Imagenes a copiar
-$dirdestino="$unidaddestino\"		            # Directorio Completo donde alberga las copias
-$date = Get-Date -Format yyyyMMdd 				# Fecha
-$smtp = "copias.connectate.com" 				# Servidor SMTP para envio de correos
-$from = "copias@copias.connectate.com <copias@copias.connectate.com>"		    # Desde que cuenta 
-$to = "copias@copias.connectate.com <copias@copias.connectate.com>" 		    # A que cuenta
-$pref="DIARIA"	 								# Prefijo de Copia (se puede usar para indicar la frecuencia de la copia)
-$warnspace="120"                                # Nivel de Alarma en espacio Libre de Destino Medido en GB
+
+try {
+    . ("variables.ps1")
+
+}
+catch {
+    Write-Host "No se ha encontrado el fichero de Variables o es inválido" 
+    # Continuamos sin ser admin.
+   $subject = "Backup ERROR -- Variables NO Encontradas"
+   $body = "No se ha podido realizar el backups porque No puedo leer el Fichero de Variables" 
+   send-MailMessage -SmtpServer $smtp -From copias@copias.connectate.com -To copias@copias.connectate.com -Subject $subject -Body $body -BodyAsHtml 
+    
+}
 
 
 

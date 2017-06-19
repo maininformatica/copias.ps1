@@ -1,4 +1,7 @@
 @echo off
-copy TMP\copias.ps1 ..\
-copy TMP\variables.ps1 ..\
-echo "Recuerda Editar el Fichero de Variables"
+
+copy copias.ps1 ..\
+copy variables.ps1 ..\
+cd ..
+notepad variables.ps1
+

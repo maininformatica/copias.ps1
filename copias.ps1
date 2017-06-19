@@ -18,19 +18,16 @@
 # Este SCRIPT Mantendra un total de 3 copias. NO se permite VARIAS COPIAS por dia si NO se renombra el fichero del dia anterior 
 # Borra la 4ª Rotacion mas antigua. Si no quieres que borre Comenta la linea donde se encuentre [Remove-Item -Recurse -Force]
  
- # Cambios de 1.4 > 1.4.1
- # Comprobamos que ejecutamos el ROL de Administrador sino salimos con error Y MAIL
- # Cambios de 1.4.1 > 1.4.2
- # Para comprobar si hay espacio disposible se hace con la variable warnspace. Este establece un limite de Uso el cual a
- # 	partir de ahí el sistema NO COPIA
- # Cambios de 1.4.2 > 1.4.3
- # Control de Errores. Realiza controles de Errores Indeterminados y sale con un MailLog
- # Cambios de 1.4.3 > 1.4.4
- # Control de Errores. Reparácion controles de Errores Indeterminados IO.EXCEPTION
- # Muestra en el BODY del Correo los VHD o VHDX copiados en Destino)
- 
- 
- 
+# Cambios de 1.4 > 1.4.1
+# Comprobamos que ejecutamos el ROL de Administrador sino salimos con error Y MAIL
+# Cambios de 1.4.1 > 1.4.2
+# Para comprobar si hay espacio disposible se hace con la variable warnspace. Este establece un limite de Uso el cual a
+# 	partir de ahí el sistema NO COPIA
+# Cambios de 1.4.2 > 1.4.3
+# Control de Errores. Realiza controles de Errores Indeterminados y sale con un MailLog
+# Cambios de 1.4.3 > 1.4.4
+# Control de Errores. Reparácion controles de Errores Indeterminados IO.EXCEPTION
+# Muestra en el BODY del Correo los VHD o VHDX copiados en Destino)
  
 # Variables de Entorno
 try {

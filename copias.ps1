@@ -38,7 +38,7 @@ try {
 
 }
 catch {
-    Write-Host "No se ha encontrado el fichero de Variables o es invÃ¡lido" 
+    Write-Host "No se ha encontrado el fichero de Variables o es inválido" 
     # Continuamos sin ser admin.
    $subject = "Backup ERROR -- Variables NO Encontradas"
    $body = "No se ha podido realizar el backups porque No puedo leer el Fichero de Variables" 

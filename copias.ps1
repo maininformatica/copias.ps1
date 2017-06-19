@@ -240,8 +240,7 @@ try
 	$body = "No se ha podido realizar el backups porque ya existe una copia de seguridad con este nombre: $destination" 
 	#Send an Email to User  
     send-MailMessage -SmtpServer $smtp -From $from -To $to -Subject $subject -Body $body -BodyAsHtml 
-            
-  
+   
  } elseif ($path -eq $false) { 
          echo "Empezando Copia $date"
 		Haz-copia

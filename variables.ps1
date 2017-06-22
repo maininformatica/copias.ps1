@@ -1,5 +1,7 @@
 # Variables de Entorno
-$version="1.5"
+$dirlocal="C:\COPIAS\"
+$ficheroversion="c:\COPIAS\version.txt"
+$outputfile="C:\output.txt"
 $servername="HV-EJEMPLO"							# Nombre HOST HyperV
 $maquinas = ('MACHINE1','MACHINE2')	# Nombre de Maquinas a Copias
 $nummax = "3"									# Numero de copias NO rotativas, es decir, una vez existan 7 a la 8 borrarÃ¡ la mas antigua

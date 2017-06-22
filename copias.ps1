@@ -1,6 +1,6 @@
 #+-------------------------------------------------------------------+   
 #|              SCRIPT DE COPIAS MAIN INFORMATICA GANDIA SL          | 
-#|              V1.5.1  copias@copias.connectate.com                 |
+#|              V1.5.3  copias@copias.connectate.com                 |
 #|                                                                   |
 #|   METODO DE COPIAS: VM-EXPORT Power Shell                         |
 #|                                                                   |

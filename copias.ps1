@@ -64,6 +64,7 @@ echo "Mirando $VHD"
 ForEach ($MUCHOSVHD in $VHD ) { 
 $SIZEVHD=$SIZEVHD + @(Get-VHD –Path $MUCHOSVHD).filesize
 }
+}
 
 $TAMORIGEN=@($SIZEVHD / 1gb ) | % {$_.ToString("#.##")}
 $TAMDESTINO=tamanyo $dirdestino

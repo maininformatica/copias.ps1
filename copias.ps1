@@ -1,6 +1,6 @@
 #+-------------------------------------------------------------------+   
 #|              SCRIPT DE COPIAS MAIN INFORMATICA GANDIA SL          | 
-#|              V1.5   copias@copias.connectate.com                  |
+#|              V1.5.1  copias@copias.connectate.com                 |
 #|                                                                   |
 #|   METODO DE COPIAS: VM-EXPORT Power Shell                         |
 #|                                                                   |
@@ -30,6 +30,7 @@
 
 # Version 1.5 Requiere Registro de Variables.
 
+$versionnueva="1.5.2"
 
 
 # Variables de Entorno
@@ -38,7 +39,7 @@ try {
 
 }
 catch {
-    Write-Host "No se ha encontrado el fichero de Variables o es inválido" 
+    Write-Host "No se ha encontrado el fichero de Variables o es invalido" 
     # Continuamos sin ser admin.
    $subject = "Backup ERROR -- Variables NO Encontradas"
    $body = "No se ha podido realizar el backups porque No puedo leer el Fichero de Variables" 
@@ -46,6 +47,19 @@ catch {
    send-MailMessage -SmtpServer $smtptmp -From copias@copias.connectate.com -To copias@copias.connectate.com -Subject $subject -Body $body -BodyAsHtml 
    exit 0 
 }
+
+## Versiones
+$versionactual=[IO.File]::ReadAllText("$ficheroversion")
+if ($versionnueva -gt $versionactual) {
+echo "Version de Sistema: $versionactual. Version Actualizada $versionnueva"
+Remove-Item  -Path $ficheroversion -Force
+New-Item $ficheroversion -type file -force -value "$versionnueva"
+$subject = "Backup INFO $servername $date"
+$body = "Se ha actualizado el Script de Copias de $servername desde la version: $versionactual a la $versionnueva " 
+#Send an Email to User  
+send-MailMessage -SmtpServer $smtp -From $from -To $to -Subject $subject -Body $body -BodyAsHtml 
+} 
+
 
 ## OUTPUT
 $outputfile="C:\output.txt"
@@ -272,9 +286,7 @@ try
  } elseif ($path -eq $false) { 
          echo "Empezando Copia $date"
 		Haz-copia
-			
  }
-
 ## Fin cotrol Errores
  }
  }
@@ -286,5 +298,4 @@ catch [Exception] {
  #Send an Email to User  
  send-MailMessage -SmtpServer $smtp -From $from -To $to -Subject $subject -Body $body -BodyAsHtml 
  ### Throw ("Ooops! " + $error[0].Exception)
-
 }

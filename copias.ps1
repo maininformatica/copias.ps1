@@ -79,13 +79,13 @@ function tamanyo
     "{0:n2}" -f ((gci -path $pth -recurse | measure-object -property length -sum).sum /1gb ) 
 }
 
-# Tamaño origen
+# Tamaño origen Para Mail
 $SIZEVHD=0
 ## ForEach ($expmaq in $maquinas ) { 
-## $VHD=@(Get-VM –VMName "$expmaq" | Select-Object VMId | Get-VHD).path
+## @(Get-VM –VMName "$expmaq" | Select-Object VMId | Get-VHD).path
 ## echo "Mirando $VHD"
 ## ForEach ($MUCHOSVHD in $VHD ) { 
-## $SIZEVHD=$SIZEVHD + @(Get-VHD –Path $MUCHOSVHD).filesize
+## $SIZEVHD=$SIZEVHD + @(Get-VHD â€“Path $MUCHOSVHD).filesize
 ## }
 ## }
 

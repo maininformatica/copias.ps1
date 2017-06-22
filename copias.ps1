@@ -80,15 +80,14 @@ function tamanyo
 }
 
 # Tamaño origen
-## $SIZEVHD=0
+$SIZEVHD=0
 ## ForEach ($expmaq in $maquinas ) { 
 ## $VHD=@(Get-VM –VMName "$expmaq" | Select-Object VMId | Get-VHD).path
 ## echo "Mirando $VHD"
 ## ForEach ($MUCHOSVHD in $VHD ) { 
 ## $SIZEVHD=$SIZEVHD + @(Get-VHD –Path $MUCHOSVHD).filesize
 ## }
-$SIZEVHD=0
-}
+## }
 
 $TAMORIGEN=@($SIZEVHD / 1gb ) | % {$_.ToString("#.##")}
 $TAMDESTINO=tamanyo $dirdestino

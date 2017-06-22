@@ -28,7 +28,7 @@
 # Control de Errores. Reparácion controles de Errores Indeterminados IO.EXCEPTION
 # Muestra en el BODY del Correo los VHD o VHDX copiados en Destino)
 
-# Version 1.5 Requiere Registro de Variables. PEPE
+# Version 1.5 Requiere Registro de Variables.
 
 
 

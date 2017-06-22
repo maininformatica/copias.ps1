@@ -47,9 +47,18 @@ catch {
    exit 0 
 }
 
+## OUTPUT
+$outputfile="C:\output.txt"
+Remove-Item  -Path $outputfile -Force  # Borrado Antiguo LOG
+$ErrorActionPreference="SilentlyContinue"
+$erroritem="Exception"
+Stop-Transcript | out-null
+$ErrorActionPreference = "Continue"
+Start-Transcript -path $outputfile -append
 
 
-### Funciones      
+### Funciones
+
 function tamanyo 
 { 
     param([string]$pth) 
@@ -209,10 +218,25 @@ try
                     Compruebe el Fichero Adjunto para mayor Detalle
                     
                     " 
-			#Send an Email to User  
+		
+		 If (Select-String $outputfile -pattern $erroritem -quiet) {
+
+            # do some stuff
+            Stop-Transcript
+            $subject = "Backup ERROR $servername $date"
+            $body = "Ha habido alg&uacute;n Error NO controlado en el proceso del Script. <hr size=1> <br>Detalles del LOG Recuperado<br><br> $error[0].Exception" 
+            send-MailMessage -SmtpServer $smtp -From $from -To $to -Subject $subject -Attachments $outputfile  -Body $body -BodyAsHtml 
+            exit 0
+
+            } else {
+		
+		#Send an Email to User  
             send-MailMessage -SmtpServer $smtp -From $from -To $to -Subject $subject -Attachments $attachment -Body $body -BodyAsHtml 
             write-host "Backup Sucessfull"
             # Remove-PSDrive "Backup" -Force  
+	    
+	    }
+	    
  }
  
  If ($numcopias -gt $nummax) {

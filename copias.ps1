@@ -30,7 +30,7 @@
 
 # Version 1.5 Requiere Registro de Variables.
 
-$versionnueva="1.5.2"
+$versionnueva="1.5.3"
 
 
 # Variables de Entorno

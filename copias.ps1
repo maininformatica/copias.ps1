@@ -1,6 +1,6 @@
 #+-------------------------------------------------------------------+   
 #|              SCRIPT DE COPIAS MAIN INFORMATICA GANDIA SL          | 
-#|              V1.5.3  copias@copias.connectate.com                 |
+#|              V1.5.4  copias@copias.connectate.com                 |
 #|                                                                   |
 #|   METODO DE COPIAS: VM-EXPORT Power Shell                         |
 #|                                                                   |
@@ -30,7 +30,7 @@
 
 # Version 1.5 Requiere Registro de Variables.
 
-$versionnueva="1.5.3"
+$versionnueva="1.5.4"
 
 
 # Variables de Entorno
@@ -93,8 +93,11 @@ $TAMORIGEN=@($SIZEVHD / 1gb ) | % {$_.ToString("#.##")}
 $TAMDESTINO=tamanyo $dirdestino
 $FREEDESTINOC=get-WmiObject win32_logicaldisk -Filter "DeviceID='$unidaddestino'" | Format-Table DeviceId,@{n="FreeSpace";e={[math]::Round($_.FreeSpace/1GB,2)}} | findstr ':  '
 $FREEDESTINO="{0:N2}" -f ($FREEDESTINOC.split(":", 3) -replace(" ","") | Select-Object -Last 1)
-$TEXTTAM="El tamaño de la copia será de $TAMORIGEN GB y queda $FREEDESTINO GB libre con un uso de Copias ACTUAL de $TAMDESTINO GB en Destino"
-$TEXTTAMBODY="El tama&ntilde;o de la copia ser&aacute; de <b>$TAMORIGEN</b> GB y queda <b>$FREEDESTINO</b> GB libre con un uso de Copias ACTUAL de <b>$TAMDESTINO</b> GB en Destino"
+## $TEXTTAM="El tamaño de la copia será de $TAMORIGEN GB y queda $FREEDESTINO GB libre con un uso de Copias ACTUAL de $TAMDESTINO GB en Destino"
+$TEXTTAM="Queda $FREEDESTINO GB libre con un uso de Copias ACTUAL de $TAMDESTINO GB en Destino"
+## $TEXTTAMBODY="El tama&ntilde;o de la copia ser&aacute; de <b>$TAMORIGEN</b> GB y queda <b>$FREEDESTINO</b> GB libre con un uso de Copias ACTUAL de <b>$TAMDESTINO</b> GB en Destino"
+$TEXTTAMBODY="Queda <b>$FREEDESTINO</b> GB libre con un uso de Copias ACTUAL de <b>$TAMDESTINO</b> GB en Destino"
+
 
 $datestart=Get-Date -Format "dd-MM-yyyy HH:mm"
 echo $TEXTTAM
@@ -221,6 +224,7 @@ try
 
             
 			$body = "<font face=arial><h2>$WARNINGTAMBODY<br></h2> Resultado de la copia para: <b>$servername</b> <br>
+		    Version de SCRIPT: <b>$versionnueva</b><br>
                     Nombre del BACKUP: <b>BKP$pref$date</b><br>
                     La copia se inici&oacute;: <b>$datestart</b><br>
                     La copia Finaliz&oacute;:  <b>$dateend</b><br>

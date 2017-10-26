@@ -55,7 +55,8 @@ echo "Version de Sistema: $versionactual. Version Actualizada $versionnueva"
 Remove-Item  -Path $ficheroversion -Force
 New-Item $ficheroversion -type file -force -value "$versionnueva"
 $subject = "Backup INFO $servername $date"
-$body = "Se ha actualizado el Script de Copias de $servername desde la version: $versionactual a la $versionnueva " 
+$body = "Se ha actualizado el Script de Copias de $servername desde la version: $versionactual a la $versionnueva<br>
+  DETALLE: Eliminacion Aviso Primario Rol Administrador. Si no puede hacer la copia por este Motivo enviar&aacute; un Exception" 
 #Send an Email to User  
 send-MailMessage -SmtpServer $smtp -From $from -To $to -Subject $subject -Body $body -BodyAsHtml 
 } 

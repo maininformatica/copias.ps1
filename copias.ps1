@@ -30,7 +30,7 @@
 
 # Version 1.5 Requiere Registro de Variables.
 
-$versionnueva="1.5.4"
+$versionnueva="1.5.5"
 
 
 # Variables de Entorno
@@ -143,7 +143,7 @@ else
    # Continuamos sin ser admin.
    $subject = "Backup ERROR $servername $date"
    $body = "No se ha podido realizar el backups porque No Veo el Rol de ADMINISTRADOR para $userid" 
-   send-MailMessage -SmtpServer $smtp -From $from -To $to -Subject $subject -Body $body -BodyAsHtml 
+   ## send-MailMessage -SmtpServer $smtp -From $from -To $to -Subject $subject -Body $body -BodyAsHtml 
    exit 0
    }
  

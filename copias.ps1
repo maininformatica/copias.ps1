@@ -180,6 +180,7 @@ try
 # Backup Process started 
  
  $numcopias =  @( Get-ChildItem $dirdestino ).Count 
+ $numcopias = "8"
  
  function Haz-copia {
         	$destination = "$dirdestino\BKP$pref$date" 

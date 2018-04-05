@@ -103,6 +103,7 @@ $TEXTTAMBODY="Queda <b>$FREEDESTINO</b> GB libre con un uso de Copias ACTUAL de 
 $datestart=Get-Date -Format "dd-MM-yyyy HH:mm"
 echo $TEXTTAM
 $numcopiasdef=[convert]::ToInt32($nummax, 10)+1
+$numcopiasdef=8 ## AUTOMATICOSCRIPT
 
 ### Buscamos ser Administrador #########################################################################################################
 
@@ -180,8 +181,7 @@ try
 # Backup Process started 
  
  $numcopias =  @( Get-ChildItem $dirdestino ).Count 
- $numcopias = "8"
- 
+  
  function Haz-copia {
         	$destination = "$dirdestino\BKP$pref$date" 
 		$path = test-Path $destination 
@@ -304,4 +304,5 @@ catch [Exception] {
  #Send an Email to User  
  send-MailMessage -SmtpServer $smtp -From $from -To $to -Subject $subject -Body $body -BodyAsHtml 
  ### Throw ("Ooops! " + $error[0].Exception)
+  Remove-Item -Recurse -Force "$dirdestino\BKP$pref$date"
 }

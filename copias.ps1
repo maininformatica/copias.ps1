@@ -27,8 +27,8 @@
 # Cambios de 1.4.3 > 1.4.4
 # Control de Errores. Reparácion controles de Errores Indeterminados IO.EXCEPTION
 # Muestra en el BODY del Correo los VHD o VHDX copiados en Destino)
-
 # Version 1.5 Requiere Registro de Variables.
+# Version 1.5.6 nummax automatico y eliminacion carpeta si error
 
 $versionnueva="1.5.6"
 
@@ -102,8 +102,9 @@ $TEXTTAMBODY="Queda <b>$FREEDESTINO</b> GB libre con un uso de Copias ACTUAL de 
 
 $datestart=Get-Date -Format "dd-MM-yyyy HH:mm"
 echo $TEXTTAM
+$nummax=8 ## AUTOMATICOSCRIPT
 $numcopiasdef=[convert]::ToInt32($nummax, 10)+1
-$numcopiasdef=8 ## AUTOMATICOSCRIPT
+
 
 ### Buscamos ser Administrador #########################################################################################################
 

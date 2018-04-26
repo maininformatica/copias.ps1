@@ -1,6 +1,6 @@
 #+-------------------------------------------------------------------+   
 #|              SCRIPT DE COPIAS MAIN INFORMATICA GANDIA SL          | 
-#|              V1.5.6  copias@copias.connectate.com                 |
+#|              V1.5.7  copias@copias.connectate.com                 |
 #|                                                                   |
 #|   METODO DE COPIAS: VM-EXPORT Power Shell                         |
 #|                                                                   |
@@ -29,8 +29,8 @@
 # Muestra en el BODY del Correo los VHD o VHDX copiados en Destino)
 # Version 1.5 Requiere Registro de Variables.
 # Version 1.5.6 nummax automatico y eliminacion carpeta si error
-
-$versionnueva="1.5.6"
+# Version 1.5.7 Cambio Modo calculo. Prima Manual y envia modo de calculo en resultado
+$versionnueva="1.5.7"
 
 
 # Variables de Entorno
@@ -102,7 +102,12 @@ $TEXTTAMBODY="Queda <b>$FREEDESTINO</b> GB libre con un uso de Copias ACTUAL de 
 
 $datestart=Get-Date -Format "dd-MM-yyyy HH:mm"
 echo $TEXTTAM
+If ($nummax  -eq '0') {
 $nummax=8 ## AUTOMATICOSCRIPT
+$anterior="El Sistema de copias esta en modo Automatico. Calculo: $nummax"
+} else {
+$anterior="El Sistema de copias esta en modo Manual. Total Programado: $nummax"
+}
 $numcopiasdef=[convert]::ToInt32($nummax, 10)+1
 
 
@@ -210,7 +215,8 @@ try
             " Fecha de Inicio de Copia: $datestart" | out-File -Append "$destination\backup_log.txt"
             " Fecha de Fin de Copia:    $dateend" | out-File -Append "$destination\backup_log.txt"
             " $TEXTTAM" | out-File -Append "$destination\backup_log.txt"
-            " El sistema guarda un Número Máximo de copias de: $numcopiasdef. Corresponden a $nummax NO Rotativas" | out-File -Append "$destination\backup_log.txt"
+            " $anterior " | out-File -Append "$destination\backup_log.txt"
+	    " El sistema guarda un Número Máximo de copias de: $numcopiasdef. Corresponden a $nummax NO Rotativas" | out-File -Append "$destination\backup_log.txt"
             " $WARNINGTAMADJ" | out-File -Append "$destination\backup_log.txt"
 			"---------------------------------------------------------------" | out-File -Append "$destination\backup_log.txt"
 			"Datos de Uso de la Unidad de Destino Backups" | out-File -Append "$destination\backup_log.txt"
@@ -231,7 +237,8 @@ try
                     Nombre del BACKUP: <b>BKP$pref$date</b><br>
                     La copia se inici&oacute;: <b>$datestart</b><br>
                     La copia Finaliz&oacute;:  <b>$dateend</b><br>
-                    El sistema guarda un N&uacute;mero M&aacute;ximo de copias de: <b>$numcopiasdef</b>. Corresponden a <b>$nummax</b> NO Rotativas<br>
+                    <b>$anterior</b><br>
+		    El sistema guarda un N&uacute;mero M&aacute;ximo de copias de: <b>$numcopiasdef</b>. Corresponden a <b>$nummax</b> NO Rotativas<br>
                     $TEXTTAMBODY<br><br>
 		    Listado de VHD Copiados<br>
 		    $BUSCAVHD
@@ -301,7 +308,7 @@ catch [Exception] {
  write-host $_.Exception.GetType().FullName; 
  write-host $_.Exception.Message; 
  $subject = "Backup ERROR $servername $date"
- $body = "Ha habido alg&uacute;n Error NO controlado en el proceso del Script. <hr size=1> <br>Detalles del LOG Recuperado<br><br> $error[0].Exception" 
+ $body = "$anterior ------------> Ha habido alg&uacute;n Error NO controlado en el proceso del Script. <hr size=1> <br>Detalles del LOG Recuperado<br><br> $error[0].Exception" 
  #Send an Email to User  
  send-MailMessage -SmtpServer $smtp -From $from -To $to -Subject $subject -Body $body -BodyAsHtml 
  ### Throw ("Ooops! " + $error[0].Exception)

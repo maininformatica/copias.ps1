@@ -35,7 +35,7 @@ $versionnueva="1.5.7"
 
 # Variables de Entorno
 try {
-    . ("c:\COPIAS\variables.ps1")
+    . ("c:\COPIAS\variables_2.ps1")
 
 }
 catch {

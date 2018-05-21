@@ -1,6 +1,7 @@
 ﻿# MAIN INFORMATICA
  
  # copias.ps1  (Archivo sin variables para update con git-clone)
+ # copias_2.ps1  (Archivo sin variables para update con git-clone)
  # copias-1.4  (Archivo Version 1.4 con variables incluidas)
  # 
  # Pasos para Instalar:
@@ -12,3 +13,9 @@
  # 4.b - Tarea c:\COPIAS\update.bat (Esta tarea es opcional se puede poner semanal o mensualmente o ejecutar de forma manual. Lo que hace es buscar actualizaciones del repositorio y lo actualiza al ejecturar el script
  
  # Hay un PDF en este repositorio con un manual de instalacion
+ 
+ 
+ # Hay 2 scripts con 2 Variables. El objeto es cargar dos tareas en Windows
+ # El variables.ps1 posee PREFIJO DIARIA
+ # El variables_2.ps1 posee PREFIJO SEMANAL
+ 

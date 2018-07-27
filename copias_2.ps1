@@ -30,7 +30,7 @@
 # Version 1.5 Requiere Registro de Variables.
 # Version 1.5.6 nummax automatico y eliminacion carpeta si error
 # Version 1.5.7 Cambio Modo calculo. Prima Manual y envia modo de calculo en resultado
-$versionnueva="1.5.7"
+$versionnueva="1.5.8"
 
 
 # Variables de Entorno
@@ -94,9 +94,11 @@ $TAMORIGEN=@($SIZEVHD / 1gb ) | % {$_.ToString("#.##")}
 $TAMDESTINO=tamanyo $dirdestino
 $FREEDESTINOC=get-WmiObject win32_logicaldisk -Filter "DeviceID='$unidaddestino'" | Format-Table DeviceId,@{n="FreeSpace";e={[math]::Round($_.FreeSpace/1GB,2)}} | findstr ':  '
 $FREEDESTINO="{0:N2}" -f ($FREEDESTINOC.split(":", 3) -replace(" ","") | Select-Object -Last 1)
-## $TEXTTAM="El tamaño de la copia será de $TAMORIGEN GB y queda $FREEDESTINO GB libre con un uso de Copias ACTUAL de $TAMDESTINO GB en Destino"
+$TAMTOTALDISCOC=get-WmiObject win32_logicaldisk -Filter "DeviceID='$unidaddestino'" | Format-Table DeviceId,@{n="Size";e={[math]::Round($_.Size/1GB,2)}} | findstr ':  '
+$TAMTOTALDISCO="{0:N2}" -f ($TAMTOTALDISCOC.split(":", 3) -replace(" ","") | Select-Object -Last 1)
+
+
 $TEXTTAM="Queda $FREEDESTINO GB libre con un uso de Copias ACTUAL de $TAMDESTINO GB en Destino"
-## $TEXTTAMBODY="El tama&ntilde;o de la copia ser&aacute; de <b>$TAMORIGEN</b> GB y queda <b>$FREEDESTINO</b> GB libre con un uso de Copias ACTUAL de <b>$TAMDESTINO</b> GB en Destino"
 $TEXTTAMBODY="Queda <b>$FREEDESTINO</b> GB libre con un uso de Copias ACTUAL de <b>$TAMDESTINO</b> GB en Destino"
 
 
@@ -216,7 +218,7 @@ try
             " Fecha de Fin de Copia:    $dateend" | out-File -Append "$destination\backup_log.txt"
             " $TEXTTAM" | out-File -Append "$destination\backup_log.txt"
             " $anterior " | out-File -Append "$destination\backup_log.txt"
-	    " El sistema guarda un Número Máximo de copias de: $numcopiasdef. Corresponden a $nummax NO Rotativas" | out-File -Append "$destination\backup_log.txt"
+	    " El sistema guarda un Número Máximo de $numcopiasdef Copias." | out-File -Append "$destination\backup_log.txt"
             " $WARNINGTAMADJ" | out-File -Append "$destination\backup_log.txt"
 			"---------------------------------------------------------------" | out-File -Append "$destination\backup_log.txt"
 			"Datos de Uso de la Unidad de Destino Backups" | out-File -Append "$destination\backup_log.txt"
@@ -238,7 +240,7 @@ try
                     La copia se inici&oacute;: <b>$datestart</b><br>
                     La copia Finaliz&oacute;:  <b>$dateend</b><br>
                     <b>$anterior</b><br>
-		    El sistema guarda un N&uacute;mero M&aacute;ximo de copias de: <b>$numcopiasdef</b>. Corresponden a <b>$nummax</b> NO Rotativas<br>
+		    El sistema guarda un N&uacute;mero M&aacute;ximo de <b>$numcopiasdef</b> Copias.<br>
                     $TEXTTAMBODY<br><br>
 		    Listado de VHD Copiados<br>
 		    $BUSCAVHD

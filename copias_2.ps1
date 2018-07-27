@@ -30,6 +30,7 @@
 # Version 1.5 Requiere Registro de Variables.
 # Version 1.5.6 nummax automatico y eliminacion carpeta si error
 # Version 1.5.7 Cambio Modo calculo. Prima Manual y envia modo de calculo en resultado
+# Cambio Textos para Tamaño total de disco Copias y Resumen enviado
 $versionnueva="1.5.8"
 
 

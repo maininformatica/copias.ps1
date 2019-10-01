@@ -62,7 +62,7 @@ Remove-Item  -Path $ficheroversion -Force
 New-Item $ficheroversion -type file -force -value "$versionnueva"
 $subject = "Backup INFO $servername $date"
 $body = "Se ha actualizado el Script de Copias de $servername desde la version: $versionactual a la $versionnueva<br>
-  DETALLE: Eliminacion Aviso Primario Rol Administrador. Si no puede hacer la copia por este Motivo enviar&aacute; un Exception" 
+  DETALLE: Se Envian los correos mediante AUTH y SSL" 
 #Send an Email to User  
 send-MailMessage -SmtpServer $emailserver -Credential $cred -UseSsl   -From $from -To $to -Subject $subject -Body $body -BodyAsHtml 
 } 

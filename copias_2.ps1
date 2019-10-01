@@ -50,6 +50,10 @@ catch {
    exit 0 
 }
 
+## Montamos las credenciales del EMAIL
+$secpasswd = ConvertTo-SecureString $emailpassword -AsPlainText -Force
+$cred = New-Object System.Management.Automation.PSCredential ($emailusername, $secpasswd)
+
 ## Versiones
 $versionactual=[IO.File]::ReadAllText("$ficheroversion")
 if ($versionnueva -gt $versionactual) {

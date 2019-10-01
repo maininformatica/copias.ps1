@@ -13,6 +13,6 @@ $from = "copias@copias.connectate.com <copias@copias.connectate.com>"		    # Des
 $to = "copias@copias.connectate.com <copias@copias.connectate.com>" 		    # A que cuenta
 $pref="DIARIA"	 								# Prefijo de Copia (se puede usar para indicar la frecuencia de la copia)
 $warnspace="120"                                # Nivel de Alarma en espacio Libre de Destino Medido en GB
-$emailusername="main@copias.connectate.com"
+$emailusername="copias@copias.connectate.com"
 $emailpassword="XXXXXXX"
 $emailserver="connectate.com"

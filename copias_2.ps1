@@ -1,6 +1,6 @@
 #+-------------------------------------------------------------------+   
 #|              SCRIPT DE COPIAS MAIN INFORMATICA GANDIA SL          | 
-#|              V1.6.1  copias@copias.connectate.com                 |
+#|              V1.6.2  copias@copias.connectate.com                 |
 #|                                                                   |
 #|   METODO DE COPIAS: VM-EXPORT Power Shell                         |
 #|                                                                   |
@@ -32,7 +32,8 @@
 # Version 1.5.7 Cambio Modo calculo. Prima Manual y envia modo de calculo en resultado
 # Version 1.5.8 Cambio Textos para Tamaño total de disco Copias y Resumen enviado
 # Version 1.6.1 Permite AUTH y SSL
-$versionnueva="1.6.1"
+# Version 1.6.2 Permite AUTH y SSL 2.0
+$versionnueva="1.6.2"
 
 
 # Variables de Entorno
@@ -46,7 +47,7 @@ catch {
    $subject = "Backup ERROR -- Variables NO Encontradas"
    $body = "No se ha podido realizar el backups porque No puedo leer el Fichero de Variables" 
    $smtptmp="copias.connectate.com"
-   send-MailMessage -SmtpServer $emailserver -Credential $cred -UseSsl  -From copias@copias.connectate.com -To copias@copias.connectate.com -Subject $subject -Body $body -BodyAsHtml 
+   send-MailMessage -SmtpServer $emailserver -Credential $cred -From copias@copias.connectate.com -To copias@copias.connectate.com -Subject $subject -Body $body -BodyAsHtml 
    exit 0 
 }
 
@@ -64,7 +65,7 @@ $subject = "Backup INFO $servername $date"
 $body = "Se ha actualizado el Script de Copias de $servername desde la version: $versionactual a la $versionnueva<br>
   DETALLE: Pemite AUTH de servidor y envio de correo a traves de SSL" 
 #Send an Email to User  
-send-MailMessage -SmtpServer $emailserver -Credential $cred -UseSsl  -From $from -To $to -Subject $subject -Body $body -BodyAsHtml 
+send-MailMessage -SmtpServer $emailserver -Credential $cred -From $from -To $to -Subject $subject -Body $body -BodyAsHtml 
 } 
 
 
@@ -159,7 +160,7 @@ else
    # Continuamos sin ser admin.
    $subject = "Backup ERROR $servername $date"
    $body = "No se ha podido realizar el backups porque No Veo el Rol de ADMINISTRADOR para $userid" 
-   ## send-MailMessage -SmtpServer $emailserver -Credential $cred -UseSsl  -From $from -To $to -Subject $subject -Body $body -BodyAsHtml 
+   ## send-MailMessage -SmtpServer $emailserver -Credential $cred -From $from -To $to -Subject $subject -Body $body -BodyAsHtml 
    exit 0
    }
  
@@ -172,7 +173,7 @@ If (!(Test-Path "$unidaddestino"))
 echo "No hay unidad Destino: $unidaddestino"
 $subject = "Backup ERROR $servername $date"
 $body = "No se ha podido realizar el backups porque La Unidad de Destino de Backups NO esta montada: $unidaddestino" 
-send-MailMessage -SmtpServer $emailserver -Credential $cred -UseSsl  -From $from -To $to -Subject $subject -Body $body -BodyAsHtml 
+send-MailMessage -SmtpServer $emailserver -Credential $cred -From $from -To $to -Subject $subject -Body $body -BodyAsHtml 
 exit 0
 }
 
@@ -183,7 +184,7 @@ echo "No esta el directorio Destino: $dirdestino"
 $subject = "Backup ERROR $servername $date"
 	$body = "No se ha podido realizar el backups porque el directorio de Destino de las copias NO existe: $dirdestino" 
 	#Send an Email to User  
-    send-MailMessage -SmtpServer $emailserver -Credential $cred -UseSsl  -From $from -To $to -Subject $subject -Body $body -BodyAsHtml 
+    send-MailMessage -SmtpServer $emailserver -Credential $cred -From $from -To $to -Subject $subject -Body $body -BodyAsHtml 
 	exit 0
 } 
 
@@ -261,13 +262,13 @@ try
             Stop-Transcript
             $subject = "Backup ERROR $servername $date"
             $body = "Ha habido alg&uacute;n Error NO controlado en el proceso del Script. <hr size=1> <br>Detalles del LOG Recuperado<br><br> $error[0].Exception" 
-            send-MailMessage -SmtpServer $emailserver -Credential $cred -UseSsl  -From $from -To $to -Subject $subject -Attachments $outputfile  -Body $body -BodyAsHtml 
+            send-MailMessage -SmtpServer $emailserver -Credential $cred -From $from -To $to -Subject $subject -Attachments $outputfile  -Body $body -BodyAsHtml 
             exit 0
 
             } else {
 		
 		#Send an Email to User  
-            send-MailMessage -SmtpServer $emailserver -Credential $cred -UseSsl  -From $from -To $to -Subject $subject -Attachments $attachment -Body $body -BodyAsHtml 
+            send-MailMessage -SmtpServer $emailserver -Credential $cred -From $from -To $to -Subject $subject -Attachments $attachment -Body $body -BodyAsHtml 
             write-host "Backup Sucessfull"
             # Remove-PSDrive "Backup" -Force  
 	    
@@ -303,7 +304,7 @@ try
 	$subject = "Backup ERROR $servername $date"
 	$body = "No se ha podido realizar el backups porque ya existe una copia de seguridad con este nombre: $destination" 
 	#Send an Email to User  
-    send-MailMessage -SmtpServer $emailserver -Credential $cred -UseSsl  -From $from -To $to -Subject $subject -Body $body -BodyAsHtml 
+    send-MailMessage -SmtpServer $emailserver -Credential $cred -From $from -To $to -Subject $subject -Body $body -BodyAsHtml 
    
  } elseif ($path -eq $false) { 
          echo "Empezando Copia $date"
@@ -318,7 +319,7 @@ catch [Exception] {
  $subject = "Backup ERROR $servername $date"
  $body = "$anterior ------------> Ha habido alg&uacute;n Error NO controlado en el proceso del Script. <hr size=1> <br>Detalles del LOG Recuperado<br><br> $error[0].Exception" 
  #Send an Email to User  
- send-MailMessage -SmtpServer $emailserver -Credential $cred -UseSsl  -From $from -To $to -Subject $subject -Body $body -BodyAsHtml 
+ send-MailMessage -SmtpServer $emailserver -Credential $cred -From $from -To $to -Subject $subject -Body $body -BodyAsHtml 
  ### Throw ("Ooops! " + $error[0].Exception)
   Remove-Item -Recurse -Force "$dirdestino\BKP$pref$date"
 }
